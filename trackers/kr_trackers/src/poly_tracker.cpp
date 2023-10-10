@@ -5,6 +5,7 @@
 #include <kr_trackers_manager/Tracker.h>
 #include <ros/ros.h>
 #include <tf/transform_datatypes.h>
+#include <geometry_msgs/TwistStamped.h>
 
 #include <Eigen/Eigen>
 #include <traj_data.hpp>
@@ -46,7 +47,10 @@ class PolyTracker : public kr_trackers_manager::Tracker
   void preempt_callback();
 
   ros::Subscriber sub_poly_cmd_;
+
+  ros::Publisher velocity_cmd_pub_;
   kr_mav_msgs::PositionCommand position_cmd_;
+  geometry_msgs::TwistStamped velocity_cmd_;
 
   /*** odom related ***/
   double cur_yaw_, last_yaw_ = 0.0, last_yawdot_ = 0.0;
@@ -92,6 +96,8 @@ void PolyTracker::Initialize(const ros::NodeHandle &nh)
   tracker_server_->registerGoalCallback(boost::bind(&PolyTracker::goal_callback, this));
   tracker_server_->registerPreemptCallback(boost::bind(&PolyTracker::preempt_callback, this));
   tracker_server_->start();
+
+  velocity_cmd_pub_ = priv_nh.advertise<geometry_msgs::TwistStamped>("/kingfisher/dodgeros_pilot/velocity_command", 1);
 
   current_trajectory_.reset(new TrajData);
   next_trajectory_.reset(new TrajData);  
@@ -313,6 +319,19 @@ kr_mav_msgs::PositionCommand::ConstPtr PolyTracker::update(const nav_msgs::Odome
   position_cmd_.acceleration.z = acc(2);
   position_cmd_.yaw = yaw_yawdot.first;
   position_cmd_.yaw_dot = yaw_yawdot.second;
+
+
+  // /dodgeros_pilot/velocity_command
+  velocity_cmd_.header.frame_id = msg->header.frame_id;
+  velocity_cmd_.header.stamp = time_now;
+  velocity_cmd_.twist.linear.x = vel(0);
+  velocity_cmd_.twist.linear.y = vel(1);
+  velocity_cmd_.twist.linear.z = vel(2);
+  velocity_cmd_.twist.angular.x = 0.0;
+  velocity_cmd_.twist.angular.y = 0.0;
+  velocity_cmd_.twist.angular.z = yaw_yawdot.second;
+  
+  velocity_cmd_pub_.publish(velocity_cmd_);
 
   time_last_ = time_now;
   last_yaw_  = yaw_yawdot.first;
