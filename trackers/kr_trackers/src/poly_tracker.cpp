@@ -482,7 +482,7 @@ void PolyTracker::goal_callback()
       }
 
       
-    }else // polynomials
+    } else // polynomials
     {
       size_t deg = msg->seg_x[0].degree;
       // decide the dimension
