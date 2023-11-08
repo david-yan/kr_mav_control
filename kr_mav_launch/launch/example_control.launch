@@ -29,7 +29,7 @@
       <remap from="~cmd" to="position_cmd"/>
     </node>
 
-    <node pkg="nodelet"
+    <!-- <node pkg="nodelet"
       type="nodelet"
       args="load kr_mav_controllers/SO3ControlNodelet $(arg nodelet_manager_name)"
       name="so3_control"
@@ -41,7 +41,7 @@
       <remap from="~position_cmd" to="position_cmd"/>
       <remap from="~so3_cmd" to="so3_cmd"/>
       <remap from="~motors" to="motors"/>
-    </node>
+    </node> -->
 
     <!-- MAV Manager -->
     <node pkg="kr_mav_manager"

@@ -10,6 +10,8 @@
 #include <Eigen/Eigen>
 #include <traj_data.hpp>
 
+#include <typeinfo>
+
 // traj data
 struct TrajData
 {
@@ -485,6 +487,24 @@ void PolyTracker::goal_callback()
     } else // polynomials
     {
       size_t deg = msg->seg_x[0].degree;
+      ROS_INFO("polynomial msg with degree: %d", deg);
+      // ROS_INFO("%s", msg->_dt_type);
+
+      for(size_t i = 0; i < msg->seg_x.size(); ++i) {
+        const auto coeffs = msg->seg_z[i].coeffs;
+        std::stringstream coeffs_buf;
+        coeffs_buf << "[";
+        for (size_t j = 0; j < coeffs.size(); ++j) {
+          if (j != 0) {
+            coeffs_buf << ", ";
+          }
+          coeffs_buf << coeffs[j];
+        }
+        coeffs_buf << "]";
+        std::string coeffs_str = coeffs_buf.str();
+        ROS_INFO("seg_z coeff: %s", coeffs_str.c_str());
+      }
+
       // decide the dimension
       if(msg->seg_z.size() <= 0)
       {
