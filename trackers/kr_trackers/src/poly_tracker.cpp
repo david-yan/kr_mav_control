@@ -333,7 +333,7 @@ kr_mav_msgs::PositionCommand::ConstPtr PolyTracker::update(const nav_msgs::Odome
   velocity_cmd_.twist.angular.y = 0.0;
   velocity_cmd_.twist.angular.z = yaw_yawdot.second;
   
-  velocity_cmd_pub_.publish(velocity_cmd_);
+  // velocity_cmd_pub_.publish(velocity_cmd_);
 
   time_last_ = time_now;
   last_yaw_  = yaw_yawdot.first;
@@ -405,7 +405,7 @@ void PolyTracker::goal_callback()
     std::vector<traj_opt::Piece<2>> segs_2d;
     std::vector<traj_opt::Piece<3>> segs_3d;
     std::vector<traj_opt::Piece<4>> segs_4d;
-    next_trajectory_.reset(new TrajData);  
+    next_trajectory_.reset(new TrajData);
 
 
     if (msg->cpts_status == 1)
